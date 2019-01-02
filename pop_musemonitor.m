@@ -46,13 +46,16 @@ if nargin < 1
     promptstr    = { { 'style'  'checkbox'  'string' 'Import auxilary channel' 'tag' 'aux' 'value' 0 } ...
                      { 'style'  'checkbox'  'string' 'Import power values'     'tag' 'power' 'value' 0 } ...
                      { 'style'  'checkbox'  'string' 'Import accelerometer (and gyro) values' 'tag' 'acc' 'value' 0 } ...
-                     { 'style'  'checkbox'  'string' 'Import everything' 'tag' 'importall' 'value' 0 } };
-    geometry = { [1] [1] [1] [1] };
+                     { 'style'  'checkbox'  'string' 'Import everything' 'tag' 'importall' 'value' 0 } ...
+                     { 'style'  'text'      'string' 'Sampling rate' } ...
+                     { 'style'  'edit'      'string' 'auto' 'tag' 'srate' } ...
+                     };
+    geometry = { [1] [1] [1] [1] [2 1] };
 
     [~,~,~,res] = inputgui( 'geometry', geometry, 'uilist', promptstr, 'helpcom', 'pophelp(''pop_musemonitor'')', 'title', 'Import muse monitor data -- pop_musemonitor()');
     if isempty(res), return; end
     
-    options = {};
+    options = { 'srate' res.srate };
     if res.aux,       options = { options{:} 'aux' 'on' }; end
     if res.power,     options = { options{:} 'power' 'on' }; end
     if res.acc,       options = { options{:} 'acc' 'on' }; end
@@ -64,6 +67,7 @@ end
 opt = finputcheck(options, { 'aux'       'string'    { 'on' 'off' }    'off';
                              'power'     'string'    { 'on' 'off' }    'off';
                              'acc'       'string'    { 'on' 'off' }    'off';
+                             'srate'     { 'string' 'real' } { {} {} }        'auto';
                              'importall' 'string'    { 'on' 'off' }    'off' }, 'pop_importmuse');
 if isstr(opt), error(opt); end
 
@@ -74,6 +78,23 @@ if length(headerNames) == 1, headerNames = strsplit(headerNames{1}, ','); end
 % fist column (time stamp is not imported as 0)
 if size(M.data,2) < length(headerNames)-1, headerNames(1)   = []; end
 if size(M.data,2) < length(headerNames)  , headerNames(end) = []; end
+
+% unique time stamps
+if isnan(str2double(opt.srate)) && ~isnumeric(opt.srate)
+    fprintf('Figuring out optimal sampling rate by counting the number of samples\nin 10 randomly choosen seconds and taking the median\n');
+    uniqueTime = unique(M.textdata(2:end,1));
+    uniqueTime = shuffle(uniqueTime);
+    nTest = min(length(uniqueTime),10);
+    nTime = zeros(1, nTest);
+    for iTime = 1:nTest
+        fprintf('.');
+        nTime(iTime) = sum(cellfun(@(x)strcmpi(x, uniqueTime{iTime}), M.textdata(2:end,1)));
+    end
+    opt.srate = median(nTime);
+    fprintf('\nSampling rate: %2.2f Hz\n', opt.srate);
+elseif ~isnumeric(opt.srate)
+    opt.srate = str2double(opt.srate);
+end
 
 EEG = eeg_emptyset;
 if strcmpi(opt.importall, 'on')
@@ -125,7 +146,7 @@ EEG.pnts   = size(EEG.data,2);
 EEG.nbchan = size(EEG.data,1);
 EEG.xmin = 0;
 EEG.trials = 1;
-EEG.srate = 300;
+EEG.srate = opt.srate;
 EEG = eeg_checkset(EEG);
 
 if isempty(options)
