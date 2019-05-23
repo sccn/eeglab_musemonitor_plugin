@@ -138,7 +138,6 @@ EEG.chanlocs = struct('labels', headerNames(allChans));
 EEG.data = M.data(:,allChans)';
 
 % should add discontinuity here for all the NaN segments
-nanPos = find(any(isnan(EEG.data)));
 EEG.data(:,any(isnan(EEG.data))) = [];
 
 %EEG.data = bsxfun(@minus, EEG.data, mean(EEG.data,2));
