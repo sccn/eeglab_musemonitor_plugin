@@ -81,17 +81,22 @@ if size(M.data,2) < length(headerNames)  , headerNames(end) = []; end
 
 % unique time stamps
 if isnan(str2double(opt.srate)) && ~isnumeric(opt.srate)
-    fprintf('Figuring out optimal sampling rate by counting the number of samples\nin 10 randomly choosen seconds and taking the median\n');
-    uniqueTime = unique(M.textdata(2:end,1));
-    uniqueTime = shuffle(uniqueTime);
-    nTest = min(length(uniqueTime),10);
-    nTime = zeros(1, nTest);
-    for iTime = 1:nTest
-        fprintf('.');
-        nTime(iTime) = sum(cellfun(@(x)strcmpi(x, uniqueTime{iTime}), M.textdata(2:end,1)));
+    fprintf('Figuring out optimal sampling rate...\n');
+    try
+        rng('default');
+        uniqueTime = unique(M.textdata(2:end,1));
+        shuffleInd = shuffle([1:length(uniqueTime)]);
+        timeTmp    = uniqueTime(shuffleInd(1:20));
+        [pointInd,unShuffleInd] = sort(shuffleInd(1:20));
+        timeTmp    = timeTmp(unShuffleInd);
+        timeNum    = datenum(timeTmp)*24*3600;
+        [~, ~, ~, slope, ~] = fastregress(pointInd, timeNum, 1);
+        opt.srate = 1/slope;
+    catch
+        disp('Error while calculating sampling rate, using default 300 Hz');
+        opt.srate = 300;
     end
-    opt.srate = median(nTime);
-    fprintf('\nSampling rate: %2.2f Hz\n', opt.srate);
+    fprintf('Sampling rate: %2.2f Hz\n', opt.srate);
 elseif ~isnumeric(opt.srate)
     opt.srate = str2double(opt.srate);
 end
