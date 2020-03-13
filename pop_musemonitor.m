@@ -90,7 +90,7 @@ if isnan(str2double(opt.srate)) && ~isnumeric(opt.srate)
         [pointInd,unShuffleInd] = sort(shuffleInd(1:20));
         timeTmp    = timeTmp(unShuffleInd);
         timeNum    = datenum(timeTmp)*24*3600;
-        [~, ~, ~, slope, ~] = fastregress(pointInd, timeNum, 1);
+        [~, ~, ~, slope, ~] = fastregress(pointInd, timeNum, 0);
         opt.srate = 1/slope;
     catch
         disp('Error while calculating sampling rate, using default 300 Hz');
