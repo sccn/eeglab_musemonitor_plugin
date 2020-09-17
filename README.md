@@ -1,7 +1,7 @@
 # eeglab_musemonitor_plugin
 
 The repository for this plugin is located at
-https://github.com/eeglabdevelopers/eeglab_musemonitor_plugin
+https://github.com/sccn/eeglab_musemonitor_plugin
 
 If you want to fix bugs, please issue a pull request. For more
 information on how to do that, see
