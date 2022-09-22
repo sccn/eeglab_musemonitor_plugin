@@ -47,10 +47,22 @@ if nargin < 1
                      { 'style'  'checkbox'  'string' 'Import power values'     'tag' 'power' 'value' 0 } ...
                      { 'style'  'checkbox'  'string' 'Import accelerometer (and gyro) values' 'tag' 'acc' 'value' 0 } ...
                      { 'style'  'checkbox'  'string' 'Import everything' 'tag' 'importall' 'value' 0 } ...
+                     { } ...
+                     ...
+                     { 'style'  'checkbox'  'string' 'High pass filter at 0.5 Hz and reject bad channel with' 'tag' 'rejchan' 'value' 0 } ...
+                     { 'style'  'edit'  'string'   '25' } ...
+                     { 'style'  'text'  'string'   'threshold' } ...
+                     ...
+                     { 'style'  'checkbox'  'string' 'High pass filter at 0.5 Hz and reject bad data (ASR) with' 'tag' 'rejdata' 'value' 0 } ...
+                     { 'style'  'edit'  'string'   '11' } ...
+                     { 'style'  'text'  'string'   'threshold' } ...
+                     {} ...
+                     ...
                      { 'style'  'text'      'string' 'Sampling rate' } ...
-                     { 'style'  'edit'      'string' 'auto' 'tag' 'srate' } ...
+                     { 'style'  'edit'      'string' 'auto' 'tag' 'srate' } ...    
+                     { } ...
                      };
-    geometry = { [1] [1] [1] [1] [2 1] };
+    geometry = { [1] [1] [1] [1] [1] [1 0.2 0.33] [1 0.2 0.33] [1] [1 1 1] };
 
     [~,~,~,res] = inputgui( 'geometry', geometry, 'uilist', promptstr, 'helpcom', 'pophelp(''pop_musemonitor'')', 'title', 'Import muse monitor data -- pop_musemonitor()');
     if isempty(res), return; end
@@ -60,6 +72,8 @@ if nargin < 1
     if res.power,     options = { options{:} 'power' 'on' }; end
     if res.acc,       options = { options{:} 'acc' 'on' }; end
     if res.importall, options = { options{:} 'importall' 'on' }; end
+    if ~isempty(res.rejchan), options = { options{:} 'rejchan' str2num(res.rejchan) }; end
+    if ~isempty(res.rejdata), options = { options{:} 'rejdata' str2num(res.data) }; end
 else
     options = varargin;
 end
@@ -67,7 +81,9 @@ end
 opt = finputcheck(options, { 'aux'       'string'    { 'on' 'off' }    'off';
                              'power'     'string'    { 'on' 'off' }    'off';
                              'acc'       'string'    { 'on' 'off' }    'off';
-                             'srate'     { 'string' 'real' } { {} {} }        'auto';
+                             'srate'     { 'string' 'real' } { {} {} } 'auto';
+                             'rejchan'   'float'     { }               [];
+                             'rejdata'   'float'     { }               [];
                              'importall' 'string'    { 'on' 'off' }    'off' }, 'pop_importmuse');
 if isstr(opt), error(opt); end
 
@@ -152,6 +168,14 @@ EEG.xmin = 0;
 EEG.trials = 1;
 EEG.srate = opt.srate;
 EEG = eeg_checkset(EEG);
+
+if ~isempty(opt.rejchan) && ~isempty(opt.rejdata)
+    EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion','off','ChannelCriterion',opt.rejchan,'LineNoiseCriterion',5,'Highpass',[0.25 0.75],'BurstCriterion',opt.rejdata,'WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
+elseif ~isempty(opt.rejchan) 
+    EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion','off','ChannelCriterion',opt.rejchan,'LineNoiseCriterion',5,'Highpass',[0.25 0.75],'BurstCriterion','off','WindowCriterion','off','BurstRejection','off','Distance','Euclidian','WindowCriterionTolerances','off');
+elseif ~isempty(opt.rejdata)
+    EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion','off','ChannelCriterion','off','LineNoiseCriterion','off','Highpass',[0.25 0.75],'BurstCriterion',opt.rejdata,'WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
+end
 
 if isempty(options)
     com = sprintf('EEG = pop_musemonitor(''%s'');', fileName);

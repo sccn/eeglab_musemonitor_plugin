@@ -30,7 +30,7 @@
 
 function vers = eegplugin_musemonitor(fig, trystrs, catchstrs)
 
-    vers = 'muse_monitor3.2';
+    vers = 'muse_monitor4.0';
     if nargin < 3
         error('eegplugin_musemonitor requires 3 arguments');
     end;
