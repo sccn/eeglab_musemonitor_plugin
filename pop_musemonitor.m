@@ -171,12 +171,15 @@ EEG = eeg_checkset(EEG);
 
 if EEG.pnts < 1000
     fprintf(2, 'Data is too short to apply artifact rejection')
-elseif ~isempty(opt.rejchan) && ~isempty(opt.rejdata)
-    EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion','off','ChannelCriterion',opt.rejchan,'LineNoiseCriterion',5,'Highpass',[0.25 0.75],'BurstCriterion',opt.rejdata,'WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
-elseif ~isempty(opt.rejchan) 
-    EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion','off','ChannelCriterion',opt.rejchan,'LineNoiseCriterion',5,'Highpass',[0.25 0.75],'BurstCriterion','off','WindowCriterion','off','BurstRejection','off','Distance','Euclidian','WindowCriterionTolerances','off');
-elseif ~isempty(opt.rejdata)
-    EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion','off','ChannelCriterion','off','LineNoiseCriterion','off','Highpass',[0.25 0.75],'BurstCriterion',opt.rejdata,'WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
+else
+    fprintf('\nApplying artifact rejection, please cite\n  A. Delorme and J. A. Martin, "Automated Data Cleaning for the Muse EEG,"\n  2021 IEEE International Conference on Bioinformatics and \n  Biomedicine (BIBM), 2021, pp. 1-5, doi: 10.1109/BIBM52615.2021.9669415.\n\n');
+    if ~isempty(opt.rejchan) && ~isempty(opt.rejdata)
+        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion','off','ChannelCriterion',opt.rejchan,'LineNoiseCriterion',5,'Highpass',[0.25 0.75],'BurstCriterion',opt.rejdata,'WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
+    elseif ~isempty(opt.rejchan) 
+        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion','off','ChannelCriterion',opt.rejchan,'LineNoiseCriterion',5,'Highpass',[0.25 0.75],'BurstCriterion','off','WindowCriterion','off','BurstRejection','off','Distance','Euclidian','WindowCriterionTolerances','off');
+    elseif ~isempty(opt.rejdata)
+        EEG = pop_clean_rawdata(EEG, 'FlatlineCriterion','off','ChannelCriterion','off','LineNoiseCriterion','off','Highpass',[0.25 0.75],'BurstCriterion',opt.rejdata,'WindowCriterion',0.25,'BurstRejection','on','Distance','Euclidian','WindowCriterionTolerances',[-Inf 7] );
+    end
 end
 
 if isempty(options)
