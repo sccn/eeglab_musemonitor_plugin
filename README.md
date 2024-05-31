@@ -10,6 +10,14 @@ If you want to fix bugs, please issue a pull request. For more
 information on how to do that, see
 https://sccn.ucsd.edu/wiki/Fork_the_EEGLAB_repo
 
+# Automated artifact rejection
+
+The plugin features automated artifact rejection as outlined in this [paper](https://ieeexplore.ieee.org/document/9669415). The best method for rejecting EEG channels is based on detecting abnormal spectrum, and the best method for rejecting continuous data segments is the Artifact Subspace Reconstruction; these automated methods, validated against human raters, showed no significant difference from and potentially outperformed human raters. The GUI is shown below. To use automated artifact rejection, check the checkbox for filtering the data and for rejecting bad portions using ASR.
+
+![muse_gui](https://github.com/sccn/eeglab_musemonitor_plugin/assets/1872705/8f6b3cd2-6599-4461-8d8b-cde220d208f9)
+
+# Version history
+
 version 4.0
 - Allow cleaning the data when it is being imported
 
