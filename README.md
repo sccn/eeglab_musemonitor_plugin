@@ -14,7 +14,9 @@ The plugin features automated artifact rejection as outlined in this [paper](htt
 
 # Testimonial
 
-"We were throwing away 30% of our Muse data. With this plugin, we are able to to keep 95% of the data." Olav Krigolson, author of "[Using Muse: Rapid Mobile Assessment of Brain Performance](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2021.634147/full)" and "[Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2017.00109/full)."
+"We were throwing away 30% of our Muse data. With this plugin, we are able to to keep 95% of the data." 
+
+Olav Krigolson, author of "[Using Muse: Rapid Mobile Assessment of Brain Performance](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2021.634147/full)" and "[Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2017.00109/full)."
 
 # Version history
 
