@@ -12,6 +12,10 @@ The plugin features automated artifact rejection as outlined in this [paper](htt
 
 ![muse_gui](https://github.com/sccn/eeglab_musemonitor_plugin/assets/1872705/8f6b3cd2-6599-4461-8d8b-cde220d208f9)
 
+# Testimonial
+
+"We were throwing away 30% of our Muse data. With this plugin, we are able to to keep 95% of the data." Olav Krigolson, author of "[Using Muse: Rapid Mobile Assessment of Brain Performance](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2021.634147/full)" and "[Choosing MUSE: Validation of a Low-Cost, Portable EEG System for ERP Research](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2017.00109/full)."
+
 # Version history
 
 version 4.0
